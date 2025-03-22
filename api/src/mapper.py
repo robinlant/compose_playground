@@ -1,5 +1,5 @@
 from dal import UserEntity
-from api import GetUserDto
+from view import GetUserDto
 
 
 

@@ -1,4 +1,4 @@
-from .user_entity import UserEntity
+from .dal_entities import UserEntity
 from .exceptions import NotFoundException
 
 class InMemoryUserRepository:
@@ -7,7 +7,7 @@ class InMemoryUserRepository:
         self._last_id = -1
     
     def create_user(self, name: str, password: str) -> UserEntity:
-        user = UserEntity(id=self._get_id(),name=name,password=password)
+        user = UserEntity(id=self._get_id(), name=name, password_hash=password)
         self._users[user.id] = user
         return user
     
