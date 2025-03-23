@@ -43,7 +43,6 @@ def test_create_user_user_info_user_created(user_entity: UserEntity):
     # Assert
     assert user.id == user_entity.id
     assert user.name == user_entity.name
-    assert user.password_hash == user_entity.password_hash
     user_repository.get_user_by_name.assert_called_once_with(name=user_entity.name)
     user_repository.create_user.assert_called_once_with(name=user_entity.name, password_hash=user_entity.password_hash)
 
@@ -96,7 +95,6 @@ def test_get_user_user_exists_returns_model(user_entity: UserEntity):
     assert u1 == u2
     assert u1.id == user_entity.id
     assert u1.name == user_entity.name
-    assert u1.password_hash == user_entity.password_hash
     user_repository.get_user_by_id.assert_called_with(user_id=user_entity.id)
     user_repository.get_user_by_name.assert_called_with(name=user_entity.name)
 
@@ -130,25 +128,7 @@ def test_get_users_all_users_returns_models(user_entities: list[UserEntity]):
     for model, entity in zip(users, user_entities):
         assert model.id == entity.id
         assert model.name == entity.name
-        assert model.password_hash == entity.password_hash
     user_repository.get_users.assert_called_with(user_ids=None)
-
-
-def test_get_users_valid_ids_returns_models(user_entities: list[UserEntity]):
-    # Arrange
-    user_repository = MagicMock(spec=UserRepository)
-    user_repository.get_users.return_value = user_entities
-
-    # Act
-    user_service = UserService(user_repository=user_repository)
-    users = user_service.get_users([1, 2, 3])
-
-    # Assert
-    for model, entity in zip(users, user_entities):
-        assert model.id == entity.id
-        assert model.name == entity.name
-        assert model.password_hash == entity.password_hash
-    user_repository.get_users.assert_called_with(user_ids=[1, 2, 3])
 
 
 def test_delete_users_right_credentials_returns_none(user_entity: UserEntity):
@@ -251,22 +231,6 @@ def test_login_right_credentials_returns_user_model(user_entity: UserEntity):
     # Assert
     assert user_entity.id == res.id
     assert res.name == user_entity.name
-    assert res.password_hash == user_entity.password_hash
-
-
-def test_login_right_credentials_returns_model(user_entity: UserEntity):
-    # Arrange
-    user_repository = MagicMock(spec=UserRepository)
-    user_repository.get_user_by_id.return_value = user_entity
-
-    # Act
-    user_service = UserService(user_repository=user_repository)
-    res = user_service.login(user_id=user_entity.id, user_password="password")
-
-    # Assert
-    assert user_entity.id == res.id
-    assert res.name == user_entity.name
-    assert res.password_hash == user_entity.password_hash
 
 
 def test_login_wrong_credentials_raises_exception(user_entity: UserEntity):

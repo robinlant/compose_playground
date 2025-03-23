@@ -61,14 +61,17 @@ class UserService:
         user.name = new_username
         self._user_repository.update_user(user=user)
 
-    def _validate_password(self, password: str, user_id: int):
-        user = self.get_user(user_id)
+    def _validate_password(self, password: str, user_id: int | str):
+        if isinstance(user_id, int):
+            user = self._user_repository.get_user_by_id(user_id=user_id)
+        else:
+            user = self._user_repository.get_user_by_name(name=user_id)
         self._ensure_found(user, user_id)
         hashed_password = _generate_pw_hash(password)
         if hashed_password != user.password_hash:
             raise WrongCredentialsException(msg="Wrong password")
 
-    def login(self, user_id: int, user_password: str) -> UserModel:
+    def login(self, user_id: int | str, user_password: str) -> UserModel:
         self._validate_password(password=user_password, user_id=user_id)
         return self.get_user(user_id)
 
@@ -87,7 +90,7 @@ class UserService:
 
     @staticmethod
     def _to_model(user: UserEntity) -> UserModel:
-        return UserModel(id=user.id, name=user.name, password_hash=user.password_hash)
+        return UserModel(id=user.id, name=user.name)
 
 
 def _generate_pw_hash(password: str) -> str:

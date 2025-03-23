@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+
 @dataclass
 class VoteModel:
     id: int
@@ -8,11 +9,13 @@ class VoteModel:
     option_id: int
     vote_date: datetime
 
+
 @dataclass
 class OptionModel:
     id: int
     poll_id: int
     text: str
+
 
 @dataclass
 class PollModel:
@@ -25,9 +28,9 @@ class PollModel:
     multiple_choice: bool
     options: list[OptionModel] | None = None
 
+
 @dataclass
 class UserModel:
     id: int
     name: str
-    password_hash: str
     created_polls: list[PollModel] | None = None
