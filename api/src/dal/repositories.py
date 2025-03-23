@@ -21,6 +21,15 @@ class UserRepository(GenericRepository):
     def __init__(self, crs: cursor):
         super().__init__(crs)
 
+    def update_user(self, user: UserEntity) -> None:
+        found_user = self.get_user_by_id(user_id=user.id)
+        _ensure_found(found_user, table_name="users", column_name="id", identifier=user.id)
+        self.cur.execute("""
+        UPDATE users
+        SET name = %s, password_hash = %s
+        WHERE id = %s;
+        """, (user.name, user.password_hash, user.id))
+
     def create_user(self, name: str, password_hash: str, commit: bool = True) -> None:
         try:
             self.cur.execute("""
@@ -95,7 +104,7 @@ class PollRepository(GenericRepository):
                 raise DalUnexpectedError("Data Corruption, Poll was not found")
 
             options_data = [(opt, poll.id) for opt in options]
-            execute_values(self.cur,"""
+            execute_values(self.cur, """
             INSERT INTO options
             (text, poll_id)
             values %s;
@@ -209,7 +218,7 @@ class VoteRepository(GenericRepository):
         if commit:
             self.commit()
 
-    def delete_vote(self, vote_id:int, commit:bool = True) -> None:
+    def delete_vote(self, vote_id: int, commit: bool = True) -> None:
         self.cur.execute("""
         DELETE FROM votes
         WHERE id = %s;
@@ -222,7 +231,7 @@ class VoteRepository(GenericRepository):
         self.cur.execute("""
         SELECT id, user_id, option_id, vote_date FROM votes
         WHERE id = %s;        
-        """,(vote_id,))
+        """, (vote_id,))
 
         return self.fetch_vote()
 
@@ -269,6 +278,6 @@ class VoteRepository(GenericRepository):
         return VoteEntity(id=data[0], user_id=data[1], option_id=data[2], vote_date=data[3])
 
 
-def _ensure_found(obj: Any, table_name:str, column_name:str, identifier: str | int) -> None:
+def _ensure_found(obj: Any, table_name: str, column_name: str, identifier: str | int) -> None:
     if obj is None:
         raise DalNotFound(table_name, column_name, identifier)
