@@ -139,6 +139,14 @@ class PollRepository(GenericRepository):
         """, (poll_id,))
         return self._fetch_poll()
 
+    def get_polls_by_user(self, user_id: int) -> list[PollEntity]:
+        self.cur.execute("""
+        SELECT id, name, tag, user_id, anonymous_voting, multiple_choice
+        FROM polls
+        WHERE user_id = %s;
+        """, (user_id,))
+        return self._fetch_polls()
+
     def get_poll_by_user_and_tag(self, user_id: int, tag: str) -> PollEntity | None:
         self.cur.execute("""
         SELECT id, name, tag, user_id, anonymous_voting, multiple_choice, creation_date
