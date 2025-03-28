@@ -16,9 +16,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: |
-          python -m pip --upgrade pip
-          pip install -r api/requirements.txt
+        run: pip install -r api/requirements.txt
       - name: Test with Pytest
         run: pytest -vv
         working-directory: api
