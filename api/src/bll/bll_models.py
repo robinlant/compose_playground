@@ -13,7 +13,6 @@ class VoteModel:
 @dataclass
 class OptionModel:
     id: int
-    poll_id: int
     text: str
 
 
