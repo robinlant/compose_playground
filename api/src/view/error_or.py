@@ -6,8 +6,13 @@ T = TypeVar("T")
 
 
 class ErrorOr[T]:
-    def __init__(self, obj: T | None = None, is_error: bool = False, error_msg: str | None = None,
-                 error_code: int | None = None):
+    def __init__(
+        self,
+        obj: T | None = None,
+        is_error: bool = False,
+        error_msg: str | None = None,
+        error_code: int | None = None,
+    ):
         if is_error and error_code is None:
             raise ValueError("error code cannot be None")
         self.is_error = is_error
@@ -17,5 +22,7 @@ class ErrorOr[T]:
 
     def return_or_raise_http_exception(self) -> T:
         if self.is_error:
-            raise HTTPException(status_code=self.error_code, detail=self.error_msg)
+            raise HTTPException(
+                status_code=self.error_code, detail=self.error_msg
+            )
         return self.obj

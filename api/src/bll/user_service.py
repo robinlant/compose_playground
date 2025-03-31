@@ -7,7 +7,8 @@ from .bll_exceptions import (
     DatabaseExcetpion,
     UnallowedCharactersException,
     FalseStringFormatException,
-    ModelNotFound, WrongCredentialsException
+    ModelNotFound,
+    WrongCredentialsException,
 )
 from .bll_models import UserModel
 
@@ -21,7 +22,9 @@ class UserService:
             password_hash = _generate_pw_hash(password)
             name = name.lower().strip()
             self._validate_username(name=name)
-            self._user_repository.create_user(name=name.lower(), password_hash=password_hash)
+            self._user_repository.create_user(
+                name=name.lower(), password_hash=password_hash
+            )
             user = self._user_repository.get_user_by_name(name=name)
             if user is None:
                 raise DatabaseExcetpion("Error while creating user")
@@ -47,14 +50,18 @@ class UserService:
         self._user_repository.delete_user(user_id=user_id)
         return None
 
-    def change_password(self, user_id: int, user_password: str, new_password: str) -> None:
+    def change_password(
+        self, user_id: int, user_password: str, new_password: str
+    ) -> None:
         user = self._user_repository.get_user_by_id(user_id)
         self._ensure_found(user, user_id)
         self._validate_password(password=user_password, user_id=user_id)
         user.password_hash = _generate_pw_hash(password=new_password)
         self._user_repository.update_user(user=user)
 
-    def change_username(self, user_id: int, user_password: str, new_username: str) -> UserModel:
+    def change_username(
+        self, user_id: int, user_password: str, new_username: str
+    ) -> UserModel:
         user = self._user_repository.get_user_by_id(user_id)
         self._ensure_found(user, user_id)
         self._validate_password(password=user_password, user_id=user_id)
@@ -76,7 +83,9 @@ class UserService:
         return self.get_user(user_id)
 
     @staticmethod
-    def _ensure_found(user_entity: UserEntity | None, identifier: int | None = None) -> UserEntity:
+    def _ensure_found(
+        user_entity: UserEntity | None, identifier: int | None = None
+    ) -> UserEntity:
         if user_entity is None:
             raise ModelNotFound(f"User {identifier} not found")
         return user_entity
@@ -84,9 +93,13 @@ class UserService:
     @staticmethod
     def _validate_username(name: str):
         if len(name) < 3:
-            raise FalseStringFormatException(msg="Username must be at least 3 characters long", string=name)
+            raise FalseStringFormatException(
+                msg="Username must be at least 3 characters long", string=name
+            )
         if not re.fullmatch(r"^[a-z_0-9-]+$", name):
-            raise UnallowedCharactersException("Only a-z, 0-9 and _ are allowed in usernames", name)
+            raise UnallowedCharactersException(
+                "Only a-z, 0-9 and _ are allowed in usernames", name
+            )
 
     @staticmethod
     def _to_model(user: UserEntity) -> UserModel:

@@ -2,8 +2,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.bll.bll_exceptions import UserExistsException, FalseStringFormatException, UnallowedCharactersException, \
-    WrongCredentialsException, ModelNotFound
+from src.bll.bll_exceptions import (
+    UserExistsException,
+    FalseStringFormatException,
+    UnallowedCharactersException,
+    WrongCredentialsException,
+    ModelNotFound,
+)
 from src.bll.user_service import UserService
 from src.dal import UserEntity
 from src.dal.exceptions import DalUniqueViolationException
@@ -26,7 +31,7 @@ def user_entities() -> list[UserEntity]:
     return [
         UserEntity(id=1, name="bobi", password_hash=pw_hash),
         UserEntity(id=2, name="bob8", password_hash=pw_hash),
-        UserEntity(id=3, name="bob", password_hash=pw_hash)
+        UserEntity(id=3, name="bob", password_hash=pw_hash),
     ]
 
 
@@ -44,15 +49,19 @@ def test_create_user_user_info_user_created(user_entity: UserEntity):
     assert user.id == user_entity.id
     assert user.name == user_entity.name
     user_repository.get_user_by_name.assert_called_once_with(name=user_entity.name)
-    user_repository.create_user.assert_called_once_with(name=user_entity.name, password_hash=user_entity.password_hash)
+    user_repository.create_user.assert_called_once_with(
+        name=user_entity.name, password_hash=user_entity.password_hash
+    )
 
 
 def test_create_user_user_exists_raises_exception():
     # Arrange
     user_repository = MagicMock(spec=UserRepository)
-    user_repository.create_user.side_effect = DalUniqueViolationException(table_name="some_table",
-                                                                          columnn_name="some_column",
-                                                                          identifier="some_identifier")
+    user_repository.create_user.side_effect = DalUniqueViolationException(
+        table_name="some_table",
+        columnn_name="some_column",
+        identifier="some_identifier",
+    )
     user_service = UserService(user_repository=user_repository)
 
     # Act & Assert
@@ -145,7 +154,9 @@ def test_delete_users_right_credentials_returns_none(user_entity: UserEntity):
     user_repository.delete_user.assert_called_with(user_id=user_entity.id)
 
 
-def test_delete_users_wrong_credentials_raises_exception(user_entity: UserEntity):
+def test_delete_users_wrong_credentials_raises_exception(
+    user_entity: UserEntity,
+):
     # Arrange
     user_repository = MagicMock(spec=UserRepository)
     user_repository.get_user_by_id.return_value = user_entity
@@ -174,7 +185,9 @@ def test_delete_users_wrong_user_id_raises_exception():
     user_repository.get_user_by_id.assert_called_with(user_id=1)
 
 
-def test_change_password_right_credentials_returns_none(user_entity: UserEntity):
+def test_change_password_right_credentials_returns_none(
+    user_entity: UserEntity,
+):
     # Arrange
     user_repository = MagicMock(spec=UserRepository)
     user_repository.get_user_by_id.return_value = user_entity
@@ -186,10 +199,17 @@ def test_change_password_right_credentials_returns_none(user_entity: UserEntity)
 
     # Assert
     user_repository.update_user.assert_called_with(
-        user=UserEntity(id=user_entity.id, name=user_entity.name, password_hash=_generate_pw_hash("new_password")))
+        user=UserEntity(
+            id=user_entity.id,
+            name=user_entity.name,
+            password_hash=_generate_pw_hash("new_password"),
+        )
+    )
 
 
-def test_change_password_wrong_credentials_raises_exception(user_entity: UserEntity):
+def test_change_password_wrong_credentials_raises_exception(
+    user_entity: UserEntity,
+):
     # Arrange
     user_repository = MagicMock(spec=UserRepository)
     user_repository.get_user_by_id.return_value = user_entity
@@ -204,7 +224,9 @@ def test_change_password_wrong_credentials_raises_exception(user_entity: UserEnt
     user_repository.update_user.assert_not_called()
 
 
-def test_change_username_right_credentials_returns_none(user_entity: UserEntity):
+def test_change_username_right_credentials_returns_none(
+    user_entity: UserEntity,
+):
     # Arrange
     user_repository = MagicMock(spec=UserRepository)
     user_repository.get_user_by_id.return_value = user_entity
@@ -212,11 +234,20 @@ def test_change_username_right_credentials_returns_none(user_entity: UserEntity)
 
     # Act
     user_service = UserService(user_repository=user_repository)
-    user_service.change_username(user_id=user_entity.id, user_password="password", new_username="new_username")
+    user_service.change_username(
+        user_id=user_entity.id,
+        user_password="password",
+        new_username="new_username",
+    )
 
     # Assert
     user_repository.update_user.assert_called_with(
-        user=UserEntity(id=user_entity.id, name="new_username", password_hash=user_entity.password_hash))
+        user=UserEntity(
+            id=user_entity.id,
+            name="new_username",
+            password_hash=user_entity.password_hash,
+        )
+    )
 
 
 def test_login_right_credentials_returns_user_model(user_entity: UserEntity):
