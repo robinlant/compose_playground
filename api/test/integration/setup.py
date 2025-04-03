@@ -3,6 +3,8 @@ import psycopg2
 from src.configuration import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 from src.dal.init_db import ensure_exists
 
+print(f"Test db name: {DB_NAME}")
+
 
 def connect_to_db(name: str) -> psycopg2.extensions.connection:
     return psycopg2.connect(

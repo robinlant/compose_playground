@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dal-integration
     paths:
       - "api"
 
