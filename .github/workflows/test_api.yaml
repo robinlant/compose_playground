@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "api/**/*.py"
+      - "api"
 
 jobs:
   run-unittests:
