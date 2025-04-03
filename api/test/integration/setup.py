@@ -1,6 +1,6 @@
 import psycopg2
 
-from src.configuration import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
+from src.configuration import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 from src.dal.init_db import ensure_exists
 
 
@@ -17,7 +17,5 @@ connect_to_db("postgres").cursor().execute(""""
     CREATE DATABASE test;
 """)
 
-DB_NAME = "test_polls"
-
-cur = connect_to_db(DB_NAME)
+cur = connect_to_db(DB_NAME).cursor()
 ensure_exists(cur)
