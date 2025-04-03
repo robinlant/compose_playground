@@ -1,12 +1,8 @@
 run-name: Run tests for api by ${{ github.actor }}
 
 on:
-  push:
-    branches:
-      - main
-      - dal-integration
-    paths:
-      - "api"
+  - push
+  - workflow_dispatch
 
 jobs:
   run-unittests:
