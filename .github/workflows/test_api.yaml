@@ -25,7 +25,7 @@ jobs:
         working-directory: api
       - name: Test with Pytest
         run: pytest -vv
-        working-directory: api/test/unittest
+        working-directory: api/test/unittests
   
   run-dal-integration-tests:
     strategy:
@@ -34,11 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-          sudo systemctl enable docker
+        uses: docker/setup-docker-action@v4
       - name: Test with Docker compose
         working-directory: api/test/integration
         run: |
