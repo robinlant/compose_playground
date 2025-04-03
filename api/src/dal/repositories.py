@@ -44,7 +44,7 @@ class UserRepository(GenericRepository):
         )
 
     def create_user(
-        self, name: str, password_hash: str, commit: bool = True
+            self, name: str, password_hash: str, commit: bool = True
     ) -> None:
         try:
             self.cur.execute(
@@ -62,7 +62,7 @@ class UserRepository(GenericRepository):
             self.commit()
 
     def get_users(
-        self, user_ids: list[int] | None = None
+            self, user_ids: list[int] | None = None
     ) -> list[UserEntity]:
         if user_ids is None:
             self.cur.execute(
@@ -128,14 +128,14 @@ class PollRepository(GenericRepository):
         super().__init__(crs)
 
     def create_poll(
-        self,
-        name: str,
-        tag: str,
-        user_id: int,
-        anonymous_voting: bool,
-        multiple_choice: bool,
-        options: list[str],
-        commit: bool = True,
+            self,
+            name: str,
+            tag: str,
+            user_id: int,
+            anonymous_voting: bool,
+            multiple_choice: bool,
+            options: list[str],
+            commit: bool = True,
     ) -> None:
         try:
             self.cur.execute(
@@ -172,7 +172,7 @@ class PollRepository(GenericRepository):
             self.commit()
 
     def get_polls(
-        self, poll_ids: list[int] | None = None
+            self, poll_ids: list[int] | None = None
     ) -> list[PollEntity]:
         if poll_ids is None:
             self.cur.execute(
@@ -215,7 +215,7 @@ class PollRepository(GenericRepository):
         return self._fetch_polls()
 
     def get_poll_by_user_and_tag(
-        self, user_id: int, tag: str
+            self, user_id: int, tag: str
     ) -> PollEntity | None:
         self.cur.execute(
             """
@@ -240,7 +240,7 @@ class PollRepository(GenericRepository):
             self.commit()
 
     def get_options_for_poll(
-        self, poll_id: int | PollEntity
+            self, poll_id: int | PollEntity
     ) -> list[OptionEntity]:
         if isinstance(poll_id, PollEntity):
             poll_id = poll_id.id
@@ -286,7 +286,7 @@ class PollRepository(GenericRepository):
 
     @staticmethod
     def _to_poll(
-        data: tuple[int, str, str, int, bool, bool, datetime],
+            data: tuple[int, str, str, int, bool, bool, datetime],
     ) -> PollEntity:
         return PollEntity(
             id=data[0],
@@ -301,10 +301,10 @@ class PollRepository(GenericRepository):
 
 class VoteRepository(GenericRepository):
     def __init__(
-        self,
-        crs: cursor,
-        user_repository: UserRepository,
-        poll_repository: PollRepository,
+            self,
+            crs: cursor,
+            user_repository: UserRepository,
+            poll_repository: PollRepository,
     ):
         self.user_repository = user_repository
         self.poll_repository = poll_repository
@@ -384,7 +384,7 @@ class VoteRepository(GenericRepository):
         return self.fetch_votes()
 
     def get_votes_by_user_poll(
-        self, poll_id: int, user_id: int
+            self, poll_id: int, user_id: int
     ) -> list[VoteEntity]:
         self.cur.execute(
             """
@@ -416,7 +416,7 @@ class VoteRepository(GenericRepository):
 
 
 def _ensure_found(
-    obj: Any, table_name: str, column_name: str, identifier: str | int
+        obj: Any, table_name: str, column_name: str, identifier: str | int
 ) -> None:
     if obj is None:
         raise DalNotFound(table_name, column_name, identifier)
